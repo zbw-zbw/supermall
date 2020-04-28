@@ -5,12 +5,13 @@ const Home = () => import('../views/home/Home.vue')
 const Category = () => import('../views/category/Category.vue')
 const Cart = () => import('../views/cart/Cart.vue')
 const Profile = () => import('../views/profile/Profile.vue')
+const Detail = () => import('../views/detail/Detail')
 
 Vue.use(VueRouter)
 
 const routes = [{
     path: '',
-    redirect: '/home'
+    redirect: '/home' //路由重定向
   },
   {
     path: '/home',
@@ -27,6 +28,10 @@ const routes = [{
   {
     path: '/profile',
     component: Profile
+  },
+  {
+    path: '/detail/:iid',
+    component: Detail
   },
 ]
 

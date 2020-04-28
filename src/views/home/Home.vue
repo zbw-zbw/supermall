@@ -3,19 +3,20 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-
     <scroll
-      class="content"
-      ref="scroll"
       :probe-type="3"
-      @scroll="contentScroll"
       :pull-up-load="true"
       @pullingUp="loadMore"
+      @scroll="contentScroll"
+      class="content"
+      ref="scroll"
     >
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
-      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行', '新款', '精选']"
+                   @tabClick="tabClick" class="tab-control"
+                   ref="tabControl"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
     <back-top @click.native="backClick" v-show="isShow"></back-top>
@@ -49,7 +50,10 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShow: true
+      isShow: true,
+      tabOffsetTop: 0,
+      isTabFixed: false,
+      saveY: 0
     };
   },
   components: {
@@ -93,10 +97,14 @@ export default {
     },
     contentScroll(position) {
       this.isShow = -position.y > 1000;
+      this.isTabFixed = (-position.y) > this.tabOffsetTop;
     },
     loadMore() {
       this.getHomeGoods(this.currentType);
       this.$refs.scroll.scroll.refresh()
+    },
+    swiperImageLoad() {
+      this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
     },
     //网络请求
     getHomeMultidata() {
@@ -127,16 +135,8 @@ export default {
 .home-nav {
   background-color: var(--color-tint);
   color: #fff;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 1;
 }
-.tab-control {
-  position: sticky;
-  top: 44px;
-}
+
 .content {
   position: absolute;
   overflow: hidden;
